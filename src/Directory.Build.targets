@@ -1,0 +1,60 @@
+<Project>
+  <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec" DependsOnTargets="GetBuildVersion">
+    <PropertyGroup>
+      <NuspecProperties>$(NuspecProperties);config=$(Configuration)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);version=$(NuGetPackageVersion)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);SolutionDir=$(SolutionDir)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);copyright=$(Package_Copyright)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);author=$(Package_Authors)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);owner=$(Package_Owners)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);commit=$(GitCommitId)</NuspecProperties>
+
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="CleanupNupkgs" BeforeTargets="Build">
+    <ItemGroup>
+      <Nupkgs2Delete Include="$(PackageOutputAbsolutePath)\*.nupkg"/>
+    </ItemGroup>
+    <Delete Files="@(Nupkgs2Delete)" />
+  </Target>
+
+
+
+  <Target Name="ModifyTemplateDependencyVersion" AfterTargets="Pack" DependsOnTargets="GetBuildVersion">
+    <Message Importance="High" Text="NuGetPackageVersion = $(NuGetPackageVersion)" />
+    <ItemGroup>
+      <FilesToModify Remove="@(FilesToModify)" />
+      <FilesToModify Include="**/templates/**/*.csproj"/>
+      <FilesToModify Include="**/ServicesProject/**" />
+      <FilesToModify Include="**/DependencyProject/**" />
+
+    </ItemGroup>
+
+    <MSBuild Condition="@(FilesToModify->Count()) > 0" Projects="$(MSBuildProjectFile)" Properties="CurrentCsProj=%(FilesToModify.FullPath);searchedPattern=$(NuGetPackageVersion);NuGetPackageVersion=#{GitBuildVersionSimple}#" Targets="ReplaceCspojVersion">
+    </MSBuild>
+  </Target>
+
+
+  <!-- This target checks the current analyzed file $(CurrentXmlFile) -->
+  <Target Name="ReplaceCspojVersion">
+    <ItemGroup>
+      <ItemsFromFile Include="$([System.IO.File]::ReadAllText($(CurrentCsProj)))"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <TempLines Include="@(ItemsFromFile->Replace('$(searchedPattern)', $(NuGetPackageVersion)))" />
+    </ItemGroup>
+
+    <WriteLinesToFile File="$(CurrentCsProj)" Lines="@(TempLines)" Overwrite="true"/>
+  </Target>
+
+  <Target Name="CopyNupkgToFolder" AfterTargets="Pack">
+    <ItemGroup>
+      <GeneratedNupkgs Include="$(PackageOutputAbsolutePath)\*.nupkg"/>
+      <GeneratedNupkgs Include="$(PackageOutputAbsolutePath)\*.snupkg"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(GeneratedNupkgs)" DestinationFolder="$(SolutionDir)GeneratedNuGetPackages\$(Configuration)" />
+
+  </Target>
+</Project>

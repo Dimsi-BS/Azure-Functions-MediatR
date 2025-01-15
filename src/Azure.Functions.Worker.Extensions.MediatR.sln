@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Azure.Functions.Worker.Extensions.MediatR", "Azure.Functions.Worker.Extensions.MediatR\Azure.Functions.Worker.Extensions.MediatR.csproj", "{C9483153-892F-410B-AA73-118F2B5AF9B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionComponents", "SolutionComponents", "{E644F3F2-11D6-4D40-80C6-AF897919241B}"
+	ProjectSection(SolutionItems) = preProject
+		version.json = version.json
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9483153-892F-410B-AA73-118F2B5AF9B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9483153-892F-410B-AA73-118F2B5AF9B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9483153-892F-410B-AA73-118F2B5AF9B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9483153-892F-410B-AA73-118F2B5AF9B5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
