@@ -1,0 +1,37 @@
+<Project>
+    <PropertyGroup>
+        <LangVersion>latest</LangVersion>
+
+        <Package_Copyright>Copyright ©DIMSI</Package_Copyright>
+        <Package_Authors>Christophe Gondouin and the DIMSI Team</Package_Authors>
+        <Package_Owners>DIMSI</Package_Owners>
+
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <Deterministic>true</Deterministic>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Authors>$(Package_Authors)</Authors>
+        <Company>DIMSI</Company>
+        <Product/>
+        <RepositoryUrl>https://github.com/Dimsi-BS/Azure-Functions-MediatR</RepositoryUrl>
+        <PackageTags>Microsoft AzureFunctions isolated MediatR</PackageTags>
+        <Description>Microsoft AzureFunctions isolated MediatR</Description>
+        <Copyright>$(Package_Copyright)</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Nerdbank.GitVersioning" Condition="!Exists('packages.config')">
+            <Version>3.7.115</Version>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+
+        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0"/>
+    </ItemGroup>
+</Project>
