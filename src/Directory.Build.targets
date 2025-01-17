@@ -8,6 +8,7 @@
       <NuspecProperties>$(NuspecProperties);author=$(Package_Authors)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);owner=$(Package_Owners)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);commit=$(GitCommitId)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);projectUrl=$(ProjectUrl)</NuspecProperties>
 
     </PropertyGroup>
   </Target>
@@ -18,24 +19,7 @@
     </ItemGroup>
     <Delete Files="@(Nupkgs2Delete)" />
   </Target>
-
-
-
-  <Target Name="ModifyTemplateDependencyVersion" AfterTargets="Pack" DependsOnTargets="GetBuildVersion">
-    <Message Importance="High" Text="NuGetPackageVersion = $(NuGetPackageVersion)" />
-    <ItemGroup>
-      <FilesToModify Remove="@(FilesToModify)" />
-      <FilesToModify Include="**/templates/**/*.csproj"/>
-      <FilesToModify Include="**/ServicesProject/**" />
-      <FilesToModify Include="**/DependencyProject/**" />
-
-    </ItemGroup>
-
-    <MSBuild Condition="@(FilesToModify->Count()) > 0" Projects="$(MSBuildProjectFile)" Properties="CurrentCsProj=%(FilesToModify.FullPath);searchedPattern=$(NuGetPackageVersion);NuGetPackageVersion=#{GitBuildVersionSimple}#" Targets="ReplaceCspojVersion">
-    </MSBuild>
-  </Target>
-
-
+    
   <!-- This target checks the current analyzed file $(CurrentXmlFile) -->
   <Target Name="ReplaceCspojVersion">
     <ItemGroup>

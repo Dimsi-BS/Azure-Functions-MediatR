@@ -11,6 +11,7 @@
     <license type="expression">MIT</license>
     <tags>Azure Functions Isolated worker MediatR</tags>
     <copyright>$copyrigth$</copyright>
+      <projectUrl>$projectUrl$</projectUrl>
     <dependencies>
         <group targetFramework="net8.0">
             <dependency id="System.Configuration.ConfigurationManager" version="8.0.1" />
@@ -29,5 +30,7 @@
       <file src="build\**\*" target="build/" />
 
       <file src="$SolutionDir$\*.txt" target="" />
+
+      <file src="..\..\README.md" target="" />
   </files>
 </package>

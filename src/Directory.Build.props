@@ -16,6 +16,7 @@
         <Company>DIMSI</Company>
         <Product/>
         <RepositoryUrl>https://github.com/Dimsi-BS/Azure-Functions-MediatR</RepositoryUrl>
+        <ProjectUrl>https://github.com/Dimsi-BS/Azure-Functions-MediatR</ProjectUrl>
         <PackageTags>Microsoft AzureFunctions isolated MediatR</PackageTags>
         <Description>Microsoft AzureFunctions isolated MediatR</Description>
         <Copyright>$(Package_Copyright)</Copyright>
