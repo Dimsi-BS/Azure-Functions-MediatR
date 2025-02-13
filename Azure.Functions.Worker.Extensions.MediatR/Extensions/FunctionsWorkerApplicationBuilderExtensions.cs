@@ -1,6 +1,7 @@
 using Azure.Functions.Worker.Extensions.MediatR.Configuration;
 using Azure.Functions.Worker.Extensions.MediatR.Middlewares;
 using Azure.Functions.Worker.Extensions.MediatR.OpenApi;
+using MediatR;
 using MediatR.Extensions.FluentValidation.AspNetCore;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,13 +13,14 @@ public static class FunctionsWorkerApplicationBuilderExtensions
 {
     internal static IFunctionsWorkerApplicationBuilder AddMediatRAndRequestValidation(this IFunctionsWorkerApplicationBuilder builder, ConfigurationOptions configurationOptions)
     {
-        
         builder.Services.AddMediatR(options =>
         {
             options.RegisterServicesFromAssemblies(configurationOptions.MediatRAssemblies.Any()
                 ? configurationOptions.MediatRAssemblies.ToArray()
                 : AppDomain.CurrentDomain.GetAssemblies());
         });
+
+        builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ExceptionPipeline<,>));
         
         builder.Services.Configure<WorkerOptions>(options =>
         {
@@ -29,7 +31,7 @@ public static class FunctionsWorkerApplicationBuilderExtensions
             ? configurationOptions.FluentValidationAssemblies
             : AppDomain.CurrentDomain.GetAssemblies());
         
-        builder.UseWhen<RequestsValidationMiddleware>(context =>
+        builder.UseWhen<HttpExceptionHandlingMiddleware>(context =>
             context.FunctionDefinition.InputBindings.Any(b => b.Value.Type == "httpTrigger"));
         return builder;
     }

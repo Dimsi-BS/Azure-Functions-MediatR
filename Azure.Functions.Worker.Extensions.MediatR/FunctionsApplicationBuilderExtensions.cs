@@ -1,5 +1,6 @@
 ﻿using Azure.Functions.Worker.Extensions.HttpApi.Config;
 using Azure.Functions.Worker.Extensions.MediatR.Configuration;
+using Azure.Functions.Worker.Extensions.MediatR.ExceptionHandling;
 using Azure.Functions.Worker.Extensions.MediatR.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +13,7 @@ namespace Microsoft.Azure.Functions.Worker.Builder;
 public static class FunctionsApplicationBuilderExtensions
 {   
     public static IFunctionsWorkerApplicationBuilder UseMediatR(this IFunctionsWorkerApplicationBuilder builder,
-        Action<OptionsBuilder>? configureOptions = null)
+        Action<IOptionsBuilder>? configureOptions = null)
     {
         var configurationOptions = new ConfigurationOptions();
         var optionsBuilder = new OptionsBuilder(configurationOptions);
@@ -23,7 +24,7 @@ public static class FunctionsApplicationBuilderExtensions
 
         foreach (var exceptionHandler in configurationOptions.ExceptionHandlerTypes)
         {
-            builder.Services.AddTransient(exceptionHandler);
+            builder.Services.AddTransient(typeof(IHttpExceptionHandler), exceptionHandler);
         }
         
         builder.Services.RegisterCustomOpenApiProviders();

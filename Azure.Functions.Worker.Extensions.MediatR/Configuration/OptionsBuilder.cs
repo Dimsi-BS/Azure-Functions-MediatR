@@ -1,45 +1,50 @@
 using System.Reflection;
+using Azure.Functions.Worker.Extensions.MediatR.ExceptionHandling;
 using Microsoft.AspNetCore.Diagnostics;
 
 namespace Azure.Functions.Worker.Extensions.MediatR.Configuration;
 
-public class OptionsBuilder
+public interface IOptionsBuilder
 {
-    private readonly ConfigurationOptions _configurationOptions;
+    IOptionsBuilder RegisterMediatRServicesFromAssemblyContaining<T>();
+    IOptionsBuilder RegisterMediatRServicesFromAssemblies(params Assembly[] assemblies);
+    IOptionsBuilder AddFluentValidation(params Assembly[] assemblies);
 
-    internal OptionsBuilder(ConfigurationOptions configurationOptions)
-    {
-        _configurationOptions = configurationOptions;
-    }
+    IOptionsBuilder RegisterHttpExceptionHandler<TExceptionHandler>() where TExceptionHandler : class, IHttpExceptionHandler;
+    
+    IOptionsBuilder OpenApiInfos(Action<IOpenApiInfoBuilder> configureOpenApiInfos);
+}
 
-    public OptionsBuilder RegisterMediatRServicesFromAssemblyContaining<T>()
+internal class OptionsBuilder(ConfigurationOptions configurationOptions) : IOptionsBuilder
+{
+    public IOptionsBuilder RegisterMediatRServicesFromAssemblyContaining<T>()
     {
-        _configurationOptions.MediatRAssemblies.Add(typeof(T).Assembly);
+        configurationOptions.MediatRAssemblies.Add(typeof(T).Assembly);
         return this;
     }
 
-    public OptionsBuilder RegisterMediatRServicesFromAssemblies(params Assembly[] assemblies)
+    public IOptionsBuilder RegisterMediatRServicesFromAssemblies(params Assembly[] assemblies)
     {
-        _configurationOptions.MediatRAssemblies.AddRange(assemblies);
+        configurationOptions.MediatRAssemblies.AddRange(assemblies);
         return this;
     }
     
-    public OptionsBuilder AddFluentValidation(params Assembly[] assemblies)
+    public IOptionsBuilder AddFluentValidation(params Assembly[] assemblies)
     {
-        _configurationOptions.FluentValidationAssemblies.AddRange(assemblies);
+        configurationOptions.FluentValidationAssemblies.AddRange(assemblies);
         return this;
     }
     
-    public OptionsBuilder RegisterExceptionHandler<TExceptionHandler>()
-        where TExceptionHandler : class, IExceptionHandler
+    public IOptionsBuilder RegisterHttpExceptionHandler<TExceptionHandler>() 
+        where TExceptionHandler : class, IHttpExceptionHandler
     {
-        _configurationOptions.ExceptionHandlerTypes.Add(typeof(TExceptionHandler));
+        configurationOptions.ExceptionHandlerTypes.Add(typeof(TExceptionHandler));
         return this;
     }
     
-    public OptionsBuilder OpenApiInfos(Action<IOpenApiInfoBuilder> configureOpenApiInfos)
+    public IOptionsBuilder OpenApiInfos(Action<IOpenApiInfoBuilder> configureOpenApiInfos)
     {
-        var openApiInfoBuilder = new OpenApiInfoBuilder(_configurationOptions.OpenApiInfos);
+        var openApiInfoBuilder = new OpenApiInfoBuilder(configurationOptions.OpenApiInfos);
         configureOpenApiInfos(openApiInfoBuilder);
         
         return this;

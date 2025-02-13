@@ -13,11 +13,14 @@ public static class ModelMetadataExtensions
     {
         if (metadata is DefaultModelMetadata defaultModelMetadata)
         {
-            OpenApiSchema openApiSchema = collection.PayloadVisit(metadata.ModelType, namingStrategy);
+            var openApiSchema = collection.PayloadVisit(metadata.ModelType, namingStrategy);
             
-            if (metadata.ModelType.IsReferentialType() && !metadata.ModelType.IsOpenApiNullable() && !metadata.ModelType.IsOpenApiArray() && !metadata.ModelType.IsOpenApiDictionary())
+            if (metadata.ModelType.IsReferentialType() 
+                && !metadata.ModelType.IsOpenApiNullable() 
+                && !metadata.ModelType.IsOpenApiArray() 
+                && !metadata.ModelType.IsOpenApiDictionary())
             {
-                OpenApiReference reference = new OpenApiReference
+                var reference = new OpenApiReference
                 {
                     Type = ReferenceType.Schema,
                     Id = metadata.ModelType.GetOpenApiReferenceId(isDictionary: false, isList: false, namingStrategy)

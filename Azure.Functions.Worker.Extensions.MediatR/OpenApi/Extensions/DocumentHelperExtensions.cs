@@ -28,7 +28,11 @@ public static class DocumentHelperExtensions
 
         var list = new List<OpenApiParameter>();
 
-        foreach (var metadata in metadatas.Where(m => operationType is OperationType.Get or OperationType.Delete || (m is DefaultModelMetadata defaultModelMetadata && defaultModelMetadata.Attributes.PropertyAttributes!.Any(p => p is FromRouteAttribute || p is FromQueryAttribute))))
+        foreach (var metadata 
+                 in metadatas
+                     .Where(m => 
+                         operationType is OperationType.Get or OperationType.Delete 
+                         || (m is DefaultModelMetadata defaultModelMetadata && defaultModelMetadata.Attributes.PropertyAttributes!.Any(p => p is FromRouteAttribute or FromQueryAttribute))))
         {
             list.Add(metadata.ToOpenApiParameter(namingStrategy, collection));
         }

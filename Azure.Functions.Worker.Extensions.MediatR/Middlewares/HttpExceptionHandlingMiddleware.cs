@@ -1,4 +1,5 @@
 using System.Net;
+using Azure.Functions.Worker.Extensions.MediatR.ExceptionHandling;
 using Azure.Functions.Worker.Extensions.MediatR.OpenApi;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
@@ -7,7 +8,10 @@ using Newtonsoft.Json;
 
 namespace Azure.Functions.Worker.Extensions.MediatR.Middlewares;
 
-public class RequestsValidationMiddleware(JsonSerializerSettings jsonSerializerSettings): IFunctionsWorkerMiddleware
+public class HttpExceptionHandlingMiddleware(
+    JsonSerializerSettings jsonSerializerSettings, 
+    ICollection<IHttpExceptionHandler> handlers)
+    : IFunctionsWorkerMiddleware
 {
     public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
     {
@@ -15,36 +19,33 @@ public class RequestsValidationMiddleware(JsonSerializerSettings jsonSerializerS
         {
             await next(context);
         }
-        catch (FluentValidation.ValidationException ex)
+        catch (RequestHandlerException ex)
         {
             var httpReqData = await context.GetHttpRequestDataAsync();
 
             if (httpReqData != null)
             {
-                // Create an instance of HttpResponseData with 400 status code.
-                var newHttpResponse = httpReqData.CreateResponse();
-                newHttpResponse.StatusCode = HttpStatusCode.BadRequest;
-                newHttpResponse.Headers.Add("Content-Type", "application/json");
-
-                var errorResult = new ValidationErrors
-                {
-                    Errors = ex.Errors.Select(x => new Error()
-                    {
-                        ErrorCode = x.ErrorCode,
-                        Message = x.ErrorMessage,
-                        Property = x.PropertyName
-                    }).ToArray()
-                };
+                var httpResponseDataBuilder = new HttpResponseDataBuilder(httpReqData);
                 
-                var errorContent = JsonConvert.SerializeObject(errorResult, jsonSerializerSettings);
-
-                await newHttpResponse.WriteStringAsync(errorContent, context.CancellationToken);
-
-                SetResponse(context, newHttpResponse);
+                foreach (var handler in handlers)
+                {
+                    var response = await handler.CreateResponseFromException(ex.Request, ex.InnerException, httpResponseDataBuilder, context.CancellationToken);
+                    if (response is not null)
+                    {
+                        SetResponse(context, response);
+                        return;
+                    }
+                }
             }
         }
     }
 
+    private sealed class HttpResponseDataBuilder(HttpRequestData httpRequestData) : IHttpResponseDataBuilder
+    {
+        public HttpResponseData CreateResponse()
+            => httpRequestData.CreateResponse();
+    }
+    
     private static void SetResponse(FunctionContext context, HttpResponseData newHttpResponse)
     {
         var invocationResult = context.GetInvocationResult();

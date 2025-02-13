@@ -35,7 +35,8 @@ public class CustomOpenApiHttpTriggerContext
     {
         var visitors = base.GetVisitorCollection()
             .SwitchTypeVisitor<ListObjectTypeVisitor, CustomListObjectTypeVisitor>()
-            .SwitchTypeVisitor<DictionaryObjectTypeVisitor, CustomDictionaryObjectTypeVisitor>();
+            .SwitchTypeVisitor<DictionaryObjectTypeVisitor, CustomDictionaryObjectTypeVisitor>()
+            .SwitchTypeVisitor<StringTypeVisitor, CustomStringTypeVisitor>();
 
         return visitors;
     }

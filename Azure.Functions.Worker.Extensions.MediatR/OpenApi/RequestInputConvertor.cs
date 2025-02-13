@@ -26,7 +26,7 @@ public class RequestInputConvertor : IInputConverter
                 var serializerSettings = (JsonSerializerSettings)httpContext.RequestServices.GetRequiredService(typeof(JsonSerializerSettings));
                 var modelMetadataProvider = (IModelMetadataProvider)httpContext.RequestServices.GetRequiredService(typeof(IModelMetadataProvider));
 
-                object? result;
+                object? result = null;
 
                 var hasBody = httpContext.Request.Method != "GET" && httpContext.Request.Method != "DELETE";
 
@@ -36,10 +36,8 @@ public class RequestInputConvertor : IInputConverter
 
                     result = JsonConvert.DeserializeObject(stringContent, context.TargetType, serializerSettings);
                 }
-                else
-                {
-                    result = Activator.CreateInstance(context.TargetType);
-                }
+                
+                result ??= Activator.CreateInstance(context.TargetType);
 
                 modelMetadataProvider
                     .GetMetadataForProperties(context.TargetType)

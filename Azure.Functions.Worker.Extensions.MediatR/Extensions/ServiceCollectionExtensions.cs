@@ -19,10 +19,9 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddSingleton<IOpenApiInfoSetter>(
             sp => sp.GetRequiredService<CustomOpenApiHttpTriggerContext>());
         
-        
         serviceCollection.AddScoped<IDocumentHelper, CustomDocumentHelper>();
         serviceCollection.AddScoped<RouteConstraintFilter>();
-        serviceCollection.AddScoped<IOpenApiSchemaAcceptor, OpenApiSchemaAcceptor>();
+        serviceCollection.AddScoped<IOpenApiSchemaAcceptor, CustomOpenApiSchemaAcceptor>();
 
         return serviceCollection;
     }

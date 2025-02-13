@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
-    <id>Azure.Functions.Worker.Extensions.MediatR</id>
+    <id>Dimsi.Azure.Functions.Worker.Extensions.MediatR</id>
     <version>$version$</version>
-    <title>Azure.Functions.Worker.Extensions.MediatR</title>
+    <title>Dimsi.Azure.Functions.Worker.Extensions.MediatR</title>
     <authors>$author$</authors>
     <owners>$owner$</owners>
     <description>This extension has the objective to simplify the use of MediatR with Microsoft Azure Function isolated worker</description>

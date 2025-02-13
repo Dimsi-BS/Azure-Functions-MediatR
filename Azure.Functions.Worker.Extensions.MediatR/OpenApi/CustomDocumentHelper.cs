@@ -9,19 +9,26 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Configurations;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Extensions;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Visitors;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 #nullable disable
 namespace Azure.Functions.Worker.Extensions.MediatR.OpenApi;
 
-public class CustomDocumentHelper(
-    RouteConstraintFilter filter,
-    IOpenApiSchemaAcceptor acceptor,
-    IServiceProvider serviceProvider)
-    : IDocumentHelper
+public class CustomDocumentHelper : IDocumentHelper
 {
-    private readonly IDocumentHelper _internalDocumentHelper = new DocumentHelper(filter, acceptor);
+    private readonly IOpenApiSchemaAcceptor _acceptor = new CustomOpenApiSchemaAcceptor();
+    private readonly IDocumentHelper _internalDocumentHelper;
+    private readonly IServiceProvider _serviceProvider;
+
+    public CustomDocumentHelper(RouteConstraintFilter filter,
+        IOpenApiSchemaAcceptor acceptorOld,
+        IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+        _internalDocumentHelper = new DocumentHelper(filter, _acceptor);
+    }
 
     public string FilterRouteConstraints(string route)
     {
@@ -132,7 +139,7 @@ public class CustomDocumentHelper(
                     {
                         var parameterType = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => t.FullName == param.ParameterType.FullName);
 
-                        var validator = serviceProvider.GetService(typeof(IValidator<>).MakeGenericType(parameterType));
+                        var validator = _serviceProvider.GetService(typeof(IValidator<>).MakeGenericType(parameterType));
 
                         if (validator != null)
                         {
@@ -203,10 +210,10 @@ public class CustomDocumentHelper(
             }
         }
 
-        acceptor.Types = dictionary2;
-        acceptor.RootSchemas = dictionary;
-        acceptor.Schemas = schemas;
-        acceptor.Accept(collection, namingStrategy);
+        _acceptor.Types = dictionary2;
+        _acceptor.RootSchemas = dictionary;
+        _acceptor.Schemas = schemas;
+        _acceptor.Accept(collection, namingStrategy);
         return (from p in schemas.Concat(dictionary.Where(p => !Enumerable.Contains(schemas.Keys, p.Key))).Distinct()
                 where p.Key.ToUpperInvariant() != "OBJECT"
                 orderby p.Key

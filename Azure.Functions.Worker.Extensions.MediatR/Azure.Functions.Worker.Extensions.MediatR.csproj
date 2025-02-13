@@ -5,8 +5,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
-        <PackageId>Azure.Functions.Worker.Extensions.MediatR</PackageId>
-        <NuspecFile>$(MSBuildThisFileDirectory)Azure.Functions.Worker.Extensions.MediatR.nuspec</NuspecFile>
+        <PackageId>Dimsi.Azure.Functions.Worker.Extensions.MediatR</PackageId>
+        <NuspecFile>$(MSBuildThisFileDirectory)Dimsi.Azure.Functions.Worker.Extensions.MediatR.nuspec</NuspecFile>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
 
