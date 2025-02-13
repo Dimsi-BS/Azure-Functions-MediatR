@@ -34,9 +34,10 @@ public class CustomOpenApiHttpTriggerContext
     public override VisitorCollection GetVisitorCollection()
     {
         var visitors = base.GetVisitorCollection()
-            .SwitchTypeVisitor<ListObjectTypeVisitor, CustomListObjectTypeVisitor>()
-            .SwitchTypeVisitor<DictionaryObjectTypeVisitor, CustomDictionaryObjectTypeVisitor>()
-            .SwitchTypeVisitor<StringTypeVisitor, CustomStringTypeVisitor>();
+             .SwitchTypeVisitor<ListObjectTypeVisitor, CustomListObjectTypeVisitor>()
+             .SwitchTypeVisitor<DictionaryObjectTypeVisitor, CustomDictionaryObjectTypeVisitor>()
+             .SwitchTypeVisitor<ObjectTypeVisitor, CustomObjectTypeVisitor>()
+            ;
 
         return visitors;
     }
@@ -92,7 +93,9 @@ public sealed class CustomDictionaryObjectTypeVisitor(VisitorCollection visitorC
             return;
         }
 
-        openApiSchemaAcceptor.Schemas.Add(type.Key, PayloadVisit(type.Value, namingStrategy));
+        var schema = PayloadVisit(type.Value, namingStrategy);
+
+        openApiSchemaAcceptor.Schemas.Add(type.Key, schema);
     }
 
     public override OpenApiSchema PayloadVisit(Type type, NamingStrategy namingStrategy)

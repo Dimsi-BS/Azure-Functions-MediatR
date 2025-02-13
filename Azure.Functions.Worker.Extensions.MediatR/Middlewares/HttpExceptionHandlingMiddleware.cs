@@ -10,7 +10,7 @@ namespace Azure.Functions.Worker.Extensions.MediatR.Middlewares;
 
 public class HttpExceptionHandlingMiddleware(
     JsonSerializerSettings jsonSerializerSettings, 
-    ICollection<IHttpExceptionHandler> handlers)
+    IEnumerable<IHttpExceptionHandler> handlers)
     : IFunctionsWorkerMiddleware
 {
     public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
