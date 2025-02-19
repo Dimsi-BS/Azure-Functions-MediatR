@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Collections;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -19,31 +20,35 @@ public class RequestInputConvertor : IInputConverter
             return ConversionResult.Unhandled();
         }
 
-        if (context.FunctionContext.Items.TryGetValue("HttpRequestContext", out var item) && item is HttpContext httpContext)
+        if (!context.FunctionContext.Items.TryGetValue("HttpRequestContext", out var item) 
+            || item is not HttpContext httpContext)
         {
-            try
+            return ConversionResult.Unhandled();
+        }
+
+        try
+        {
+            var serializerSettings = (JsonSerializerSettings)httpContext.RequestServices.GetRequiredService(typeof(JsonSerializerSettings));
+            var modelMetadataProvider = (IModelMetadataProvider)httpContext.RequestServices.GetRequiredService(typeof(IModelMetadataProvider));
+
+            object? result = null;
+
+            var hasBody = httpContext.Request.Method != "GET" && httpContext.Request.Method != "DELETE";
+
+            if (hasBody)
             {
-                var serializerSettings = (JsonSerializerSettings)httpContext.RequestServices.GetRequiredService(typeof(JsonSerializerSettings));
-                var modelMetadataProvider = (IModelMetadataProvider)httpContext.RequestServices.GetRequiredService(typeof(IModelMetadataProvider));
+                var stringContent = await httpContext.Request.ReadAsStringAsync();
 
-                object? result = null;
-
-                var hasBody = httpContext.Request.Method != "GET" && httpContext.Request.Method != "DELETE";
-
-                if (hasBody)
-                {
-                    var stringContent = await httpContext.Request.ReadAsStringAsync();
-
-                    result = JsonConvert.DeserializeObject(stringContent, context.TargetType, serializerSettings);
-                }
+                result = JsonConvert.DeserializeObject(stringContent, context.TargetType, serializerSettings);
+            }
                 
-                result ??= Activator.CreateInstance(context.TargetType);
+            result ??= Activator.CreateInstance(context.TargetType);
 
-                modelMetadataProvider
-                    .GetMetadataForProperties(context.TargetType)
-                    .OfType<DefaultModelMetadata>()
-                    .ToList()
-                    .ForEach(metadata =>
+            modelMetadataProvider
+                .GetMetadataForProperties(context.TargetType)
+                .OfType<DefaultModelMetadata>()
+                .ToList()
+                .ForEach(metadata =>
                 {
                     if (
                         (!hasBody 
@@ -53,16 +58,61 @@ public class RequestInputConvertor : IInputConverter
                         && result != null && context.FunctionContext.BindingContext.BindingData
                             .TryGetValue(metadata.PropertyName!, out var value))
                     {
+                        if (value is string stringValue)
+                        {
+                            if (metadata.ModelType == typeof(Guid))
+                            {
+                                metadata.PropertySetter?.Invoke(result, new Guid(stringValue));
+                                return;
+                            }
+
+                            if (metadata.ModelType.IsEnum && int.TryParse(stringValue, out int intValue))
+                            {
+                                metadata.PropertySetter?.Invoke(result, Enum.ToObject(metadata.ModelType, intValue));
+                                return;
+                            }
+
+                            if (metadata.ModelType.IsAssignableTo(typeof(IEnumerable)) &&
+                                metadata.ModelType != typeof(string))
+                            {
+                                
+                                stringValue.Split(",").ToList().ForEach(v =>
+                                {
+                                    if (metadata.ModelType.GenericTypeArguments[0] == typeof(Guid))
+                                    {
+                                        var resultValue = metadata.PropertyGetter?.Invoke(result) as ICollection<Guid>;
+                                        if (resultValue == null)
+                                        {
+                                            resultValue = new List<Guid>();
+                                            metadata.PropertySetter?.Invoke(result, resultValue);
+                                        }
+                                        resultValue!.Add(new Guid(v));
+                                    }
+                                    if (metadata.ModelType.GenericTypeArguments[0] == typeof(string))
+                                    {
+                                        var resultValue = metadata.PropertyGetter?.Invoke(result) as ICollection<string>;
+                                        if (resultValue == null)
+                                        {
+                                            resultValue = new List<string>();
+                                            metadata.PropertySetter?.Invoke(result, resultValue);
+                                        }
+                                        resultValue!.Add(v);
+                                    }
+                                });
+                                
+                                return;
+                            }
+                        }
+                        
                         metadata.PropertySetter?.Invoke(result, Convert.ChangeType(value, metadata.ModelType));
                     }
                 });
 
-                return ConversionResult.Success(result);
-            }
-            catch (Exception ex)
-            {
-                return ConversionResult.Failed(ex);
-            }
+            return ConversionResult.Success(result);
+        }
+        catch (Exception ex)
+        {
+            return ConversionResult.Failed(ex);
         }
 
         return ConversionResult.Unhandled();
