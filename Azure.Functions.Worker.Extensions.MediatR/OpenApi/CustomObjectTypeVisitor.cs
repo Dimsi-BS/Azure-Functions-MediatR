@@ -55,9 +55,14 @@ public class CustomObjectTypeVisitor(
         OpenApiSchemaAcceptor instance = acceptor as OpenApiSchemaAcceptor;
         if (instance.IsNullOrDefault<OpenApiSchemaAcceptor>())
             return;
+        
+        var isOptIn = type.Value.GetCustomAttribute<JsonObjectAttribute>(false)
+            ?.MemberSerialization == MemberSerialization.OptIn;;
+        
         Dictionary<string, PropertyInfo> dictionary = type.Value
             .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(p => !p.ExistsCustomAttribute<JsonIgnoreAttribute>() &&
+            .Where(p => !p.ExistsCustomAttribute<JsonIgnoreAttribute>() && 
+                        (!isOptIn || p.ExistsCustomAttribute<JsonPropertyAttribute>()) &&
                         !p.ExistsCustomAttribute<FromQueryAttribute>() &&
                         !p.ExistsCustomAttribute<FromRouteAttribute>())
             .ToDictionary(p => p.GetJsonPropertyName(namingStrategy), p => p);
