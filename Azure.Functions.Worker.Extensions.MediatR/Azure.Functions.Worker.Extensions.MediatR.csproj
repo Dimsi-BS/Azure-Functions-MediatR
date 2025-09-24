@@ -18,13 +18,16 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <None Include="../README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+    
+    <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
         <PackageReference Include="Functions.Worker.Extensions.HttpApi" Version="3.0.0" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.0.0"/>
         <PackageReference Include="MediatR" Version="12.4.1"/>
         <PackageReference Include="MediatR.Extensions.FluentValidation.AspNetCore" Version="5.1.0"/>
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="1.5.1" />
-        <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.2.2" />
     </ItemGroup>
 
 </Project>

@@ -8,6 +8,7 @@
       <NuspecProperties>$(NuspecProperties);author=$(Package_Authors)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);owner=$(Package_Owners)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);commit=$(GitCommitId)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);projectUrl=$(ProjectUrl)</NuspecProperties>
 
     </PropertyGroup>
   </Target>
