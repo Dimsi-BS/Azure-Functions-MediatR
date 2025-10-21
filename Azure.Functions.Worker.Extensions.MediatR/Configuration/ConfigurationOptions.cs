@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 
@@ -13,5 +14,6 @@ internal class ConfigurationOptions
     public OpenApiInfo OpenApiInfos { get; } = new OpenApiInfo();
 
     public ICollection<Type> ExceptionHandlerTypes { get; } = new List<Type>();
-    public JsonSerializerSettings JsonSerializerSettings { get; set; }
+
+    public Action<MvcNewtonsoftJsonOptions> NewtonsoftJsonOptions { get; set; } = _ => { };
 }

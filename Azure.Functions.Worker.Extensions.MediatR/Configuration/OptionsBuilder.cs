@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text.Json;
 using Azure.Functions.Worker.Extensions.MediatR.ExceptionHandling;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace Azure.Functions.Worker.Extensions.MediatR.Configuration;
@@ -9,10 +10,12 @@ namespace Azure.Functions.Worker.Extensions.MediatR.Configuration;
 public interface IOptionsBuilder
 {
     IOptionsBuilder RegisterMediatRServicesFromAssemblyContaining<T>();
+    
     IOptionsBuilder RegisterMediatRServicesFromAssemblies(params Assembly[] assemblies);
+    
     IOptionsBuilder AddFluentValidation(params Assembly[] assemblies);
     
-    IOptionsBuilder AddJsonSerializerSettings(JsonSerializerSettings options);
+    IOptionsBuilder SetNewtonsoftJsonOptions(Action<MvcNewtonsoftJsonOptions> options);
 
     IOptionsBuilder RegisterHttpExceptionHandler<TExceptionHandler>() where TExceptionHandler : class, IHttpExceptionHandler;
     
@@ -39,9 +42,9 @@ internal class OptionsBuilder(ConfigurationOptions configurationOptions) : IOpti
         return this;
     }
 
-    public IOptionsBuilder AddJsonSerializerSettings(JsonSerializerSettings settings)
+    public IOptionsBuilder SetNewtonsoftJsonOptions(Action<MvcNewtonsoftJsonOptions> options)
     {
-        configurationOptions.JsonSerializerSettings = settings;
+        configurationOptions.NewtonsoftJsonOptions = options;
         return this;
     }
     

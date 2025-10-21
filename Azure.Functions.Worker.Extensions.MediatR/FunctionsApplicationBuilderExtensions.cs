@@ -27,8 +27,9 @@ public static class FunctionsApplicationBuilderExtensions
             builder.Services.AddTransient(typeof(IHttpExceptionHandler), exceptionHandler);
         }
         
+        builder.Services.AddMvcCore().AddNewtonsoftJson(configurationOptions.NewtonsoftJsonOptions);
         builder.Services.RegisterCustomOpenApiProviders();
-        builder.RegisterNewtonSoftJson(configurationOptions.JsonSerializerSettings);
+        builder.RegisterNewtonSoftJson();
         
         builder.AddHttpApi();
 

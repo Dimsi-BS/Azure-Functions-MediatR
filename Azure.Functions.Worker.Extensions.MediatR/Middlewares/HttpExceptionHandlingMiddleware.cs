@@ -9,7 +9,6 @@ using Newtonsoft.Json;
 namespace Azure.Functions.Worker.Extensions.MediatR.Middlewares;
 
 public class HttpExceptionHandlingMiddleware(
-    JsonSerializerSettings jsonSerializerSettings, 
     IEnumerable<IHttpExceptionHandler> handlers)
     : IFunctionsWorkerMiddleware
 {

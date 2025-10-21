@@ -14,11 +14,12 @@
     <dependencies>
         <group targetFramework="net8.0">
             <dependency id="System.Configuration.ConfigurationManager" version="8.0.1" />
-            <dependency id="Microsoft.Azure.Functions.Worker" version="2.0.0" />
-            <dependency id="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" version="1.5.1" />
-            <dependency id="Functions.Worker.Extensions.HttpApi" version="3.0.0" />
-            <dependency id="MediatR" version="12.4.1" />
-            <dependency id="MediatR.Extensions.FluentValidation.AspNetCore" version="5.1.0" />
+            <dependency id="Microsoft.Azure.Functions.Worker" version="2.1.0" />
+            <dependency id="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" version="1.6.0" />
+            <dependency id="Functions.Worker.Extensions.HttpApi" version="3.0.5" />
+            <dependency id="MediatR" version="13.0.0" />
+            <dependency id="MediatR.Extensions.FluentValidation.AspNetCore" version="6.0.0" />
+            <dependency id="Microsoft.AspNetCore.Mvc.NewtonsoftJson" version="8.0.21" />
         </group>
     </dependencies>
   </metadata>

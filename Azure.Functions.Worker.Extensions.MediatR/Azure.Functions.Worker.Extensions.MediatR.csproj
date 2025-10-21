@@ -23,11 +23,12 @@
     
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App"/>
-        <PackageReference Include="Functions.Worker.Extensions.HttpApi" Version="3.0.0" />
-        <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.0.0"/>
-        <PackageReference Include="MediatR" Version="12.4.1"/>
-        <PackageReference Include="MediatR.Extensions.FluentValidation.AspNetCore" Version="5.1.0"/>
-        <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="1.5.1" />
+        <PackageReference Include="Functions.Worker.Extensions.HttpApi" Version="3.0.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.21" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="2.1.0" />
+        <PackageReference Include="MediatR" Version="13.0.0" />
+        <PackageReference Include="MediatR.Extensions.FluentValidation.AspNetCore" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="1.6.0" />
     </ItemGroup>
 
 </Project>
