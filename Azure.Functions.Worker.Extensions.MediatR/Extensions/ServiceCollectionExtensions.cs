@@ -7,6 +7,7 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Configurations;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Visitors;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Newtonsoft.Json;
 
 namespace Azure.Functions.Worker.Extensions.MediatR.Extensions;
 
@@ -26,9 +27,11 @@ public static class ServiceCollectionExtensions
         return serviceCollection;
     }
     
-    public static IFunctionsWorkerApplicationBuilder RegisterNewtonSoftJson(this IFunctionsWorkerApplicationBuilder hostBuilder)
+    public static IFunctionsWorkerApplicationBuilder RegisterNewtonSoftJson(
+        this IFunctionsWorkerApplicationBuilder hostBuilder,
+        JsonSerializerSettings? configurationOptionsJsonSerializerSettings = null)
     {
-        var serializationSettings = NewtonsoftJsonObjectSerializer.CreateJsonSerializerSettings();
+        var serializationSettings = configurationOptionsJsonSerializerSettings ?? NewtonsoftJsonObjectSerializer.CreateJsonSerializerSettings();
 
         hostBuilder.UseNewtonsoftJson(serializationSettings);
         hostBuilder.Services.AddSingleton(serializationSettings);

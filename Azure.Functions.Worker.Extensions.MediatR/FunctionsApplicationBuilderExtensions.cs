@@ -28,7 +28,7 @@ public static class FunctionsApplicationBuilderExtensions
         }
         
         builder.Services.RegisterCustomOpenApiProviders();
-        builder.RegisterNewtonSoftJson();
+        builder.RegisterNewtonSoftJson(configurationOptions.JsonSerializerSettings);
         
         builder.AddHttpApi();
 
