@@ -1,6 +1,7 @@
 using Azure.Core.Serialization;
 using Azure.Functions.Worker.Extensions.MediatR.OpenApi;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Extensions.OpenApi;
 using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Abstractions;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Configurations;
@@ -14,15 +15,25 @@ namespace Azure.Functions.Worker.Extensions.MediatR.Extensions;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection RegisterCustomOpenApiProviders(this IServiceCollection serviceCollection)
-    {   
+    {
+        var iOpenApiTriggerFunctionDescriptor = serviceCollection.FirstOrDefault(d => d.ServiceType == typeof(IOpenApiTriggerFunction));
+        if (iOpenApiTriggerFunctionDescriptor != null)
+        {
+            serviceCollection.Remove(iOpenApiTriggerFunctionDescriptor);
+            
+            var scopedDescriptor = new ServiceDescriptor(iOpenApiTriggerFunctionDescriptor.ServiceType, iOpenApiTriggerFunctionDescriptor.ImplementationType!, ServiceLifetime.Scoped);
+            
+            serviceCollection.Add(scopedDescriptor);
+        }
+        
         serviceCollection.RemoveAll<IOpenApiHttpTriggerContext>();
-        serviceCollection.AddSingleton<IOpenApiHttpTriggerContext, CustomOpenApiHttpTriggerContext>();
-        serviceCollection.AddSingleton<IOpenApiInfoSetter>(
+        serviceCollection.AddScoped<IOpenApiHttpTriggerContext, CustomOpenApiHttpTriggerContext>();
+        serviceCollection.AddScoped<IOpenApiInfoSetter>(
             sp => sp.GetRequiredService<CustomOpenApiHttpTriggerContext>());
         
-        serviceCollection.AddSingleton<IDocumentHelper, CustomDocumentHelper>();
-        serviceCollection.AddSingleton<RouteConstraintFilter>();
-        serviceCollection.AddSingleton<IOpenApiSchemaAcceptor, CustomOpenApiSchemaAcceptor>();
+        serviceCollection.AddScoped<IDocumentHelper, CustomDocumentHelper>();
+        serviceCollection.AddScoped<RouteConstraintFilter>();
+        serviceCollection.AddScoped<IOpenApiSchemaAcceptor, CustomOpenApiSchemaAcceptor>();
 
         return serviceCollection;
     }
