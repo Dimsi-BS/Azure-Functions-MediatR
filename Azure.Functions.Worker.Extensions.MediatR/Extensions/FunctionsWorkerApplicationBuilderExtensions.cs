@@ -1,6 +1,7 @@
 using Azure.Functions.Worker.Extensions.MediatR.Configuration;
 using Azure.Functions.Worker.Extensions.MediatR.Middlewares;
 using Azure.Functions.Worker.Extensions.MediatR.OpenApi;
+using FluentValidation;
 using MediatR;
 using MediatR.Extensions.FluentValidation.AspNetCore;
 using Microsoft.Azure.Functions.Worker;
@@ -26,13 +27,24 @@ public static class FunctionsWorkerApplicationBuilderExtensions
         {
             options.InputConverters.RegisterAt<RequestInputConvertor>(0);
         });
-
-        builder.Services.AddFluentValidation(configurationOptions.FluentValidationAssemblies.Any()
+        
+        builder.Services.AddValidatorsFromAssemblies(configurationOptions.FluentValidationAssemblies.Any()
             ? configurationOptions.FluentValidationAssemblies
             : AppDomain.CurrentDomain.GetAssemblies());
         
         builder.UseWhen<HttpExceptionHandlingMiddleware>(context =>
             context.FunctionDefinition.InputBindings.Any(b => b.Value.Type == "httpTrigger"));
+        
+        if (configurationOptions.ValidateOnlyHttpTriggerRequest)
+        {
+             builder.UseWhen<RequestValidationMiddleware>(context =>
+                 context.FunctionDefinition.InputBindings.Any(b => b.Value.Type == "httpTrigger"));
+        }
+        else
+        {
+            builder.Services.Add(new ServiceDescriptor(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>), ServiceLifetime.Transient));
+        }
+
         return builder;
     }
 }

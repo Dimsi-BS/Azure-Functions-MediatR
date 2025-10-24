@@ -16,4 +16,6 @@ internal class ConfigurationOptions
     public ICollection<Type> ExceptionHandlerTypes { get; } = new List<Type>();
 
     public Action<MvcNewtonsoftJsonOptions> NewtonsoftJsonOptions { get; set; } = _ => { };
+
+    public bool ValidateOnlyHttpTriggerRequest { get; set; } = true;
 }

@@ -13,13 +13,13 @@
     <copyright>$copyrigth$</copyright>
     <dependencies>
         <group targetFramework="net8.0">
-            <dependency id="System.Configuration.ConfigurationManager" version="8.0.1" />
-            <dependency id="Microsoft.Azure.Functions.Worker" version="2.1.0" />
-            <dependency id="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" version="1.6.0" />
             <dependency id="Functions.Worker.Extensions.HttpApi" version="3.0.5" />
+            <dependency id="Microsoft.AspNetCore.Mvc.NewtonsoftJson" version="8.0.21" />
+            <dependency id="Microsoft.Azure.Functions.Worker" version="2.1.0" />
             <dependency id="MediatR" version="13.0.0" />
             <dependency id="MediatR.Extensions.FluentValidation.AspNetCore" version="6.0.0" />
-            <dependency id="Microsoft.AspNetCore.Mvc.NewtonsoftJson" version="8.0.21" />
+            <dependency id="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" version="1.6.0" />
+            <dependency id="System.Configuration.ConfigurationManager" version="8.0.1" />
         </group>
     </dependencies>
   </metadata>
@@ -30,5 +30,6 @@
       <file src="build\**\*" target="build/" />
 
       <file src="$SolutionDir$\*.txt" target="" />
+      <file src="$SolutionDir$\*.md" target="" />
   </files>
 </package>

@@ -17,6 +17,8 @@ public static class FunctionsApplicationBuilderExtensions
     {
         var configurationOptions = new ConfigurationOptions();
         var optionsBuilder = new OptionsBuilder(configurationOptions);
+        
+        optionsBuilder.RegisterHttpExceptionHandler<RequestValidationExceptionHandler>();
 
         configureOptions?.Invoke(optionsBuilder);
 

@@ -1,0 +1,26 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <Target Name="ValidateAzureFunctionsWorkerReference" BeforeTargets="BeforeBuild">
+        <PropertyGroup>
+            <HasAzureFunctionsWorkerReference>false</HasAzureFunctionsWorkerReference>
+            <HasAzureFunctionsWorkerSdkReference>false</HasAzureFunctionsWorkerSdkReference>
+        </PropertyGroup>
+
+        <ItemGroup>
+            <_AzureFunctionsWorkerPackage Include="@(PackageReference)" Condition="'%(Identity)' == 'Microsoft.Azure.Functions.Worker'" />
+            <_AzureFunctionsWorkerSdkPackage Include="@(PackageReference)" Condition="'%(Identity)' == 'Microsoft.Azure.Functions.Worker.Sdk'" />
+        </ItemGroup>
+
+        <PropertyGroup>
+            <HasAzureFunctionsWorkerReference Condition="'@(_AzureFunctionsWorkerPackage)' != ''">true</HasAzureFunctionsWorkerReference>
+            <HasAzureFunctionsWorkerSdkReference Condition="'@(_AzureFunctionsWorkerSdkPackage)' != ''">true</HasAzureFunctionsWorkerSdkReference>
+        </PropertyGroup>
+
+        <Error Condition="'$(HasAzureFunctionsWorkerReference)' != 'true'"
+               Text="The package 'Microsoft.Azure.Functions.Worker' is required but not referenced in this project. Please add a reference to Microsoft.Azure.Functions.Worker to use this extension." />
+
+        <Error Condition="'$(HasAzureFunctionsWorkerSdkReference)' != 'true'"
+               Text="The package 'Microsoft.Azure.Functions.Worker.Sdk' is required but not referenced in this project. Please add a reference to Microsoft.Azure.Functions.Worker.Sdk to use this extension." />
+    </Target>
+    
+</Project>

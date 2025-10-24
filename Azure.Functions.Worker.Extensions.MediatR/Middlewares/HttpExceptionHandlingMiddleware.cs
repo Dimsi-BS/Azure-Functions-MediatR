@@ -1,10 +1,8 @@
-using System.Net;
+using FluentValidation;
 using Azure.Functions.Worker.Extensions.MediatR.ExceptionHandling;
-using Azure.Functions.Worker.Extensions.MediatR.OpenApi;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.Functions.Worker.Middleware;
-using Newtonsoft.Json;
 
 namespace Azure.Functions.Worker.Extensions.MediatR.Middlewares;
 

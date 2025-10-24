@@ -15,6 +15,8 @@ public interface IOptionsBuilder
     
     IOptionsBuilder AddFluentValidation(params Assembly[] assemblies);
     
+    IOptionsBuilder ValidateAllMediatRRequests();
+    
     IOptionsBuilder SetNewtonsoftJsonOptions(Action<MvcNewtonsoftJsonOptions> options);
 
     IOptionsBuilder RegisterHttpExceptionHandler<TExceptionHandler>() where TExceptionHandler : class, IHttpExceptionHandler;
@@ -39,6 +41,12 @@ internal class OptionsBuilder(ConfigurationOptions configurationOptions) : IOpti
     public IOptionsBuilder AddFluentValidation(params Assembly[] assemblies)
     {
         configurationOptions.FluentValidationAssemblies.AddRange(assemblies);
+        return this;
+    }
+    
+    public IOptionsBuilder ValidateAllMediatRRequests()
+    {
+        configurationOptions.ValidateOnlyHttpTriggerRequest = false;
         return this;
     }
 
