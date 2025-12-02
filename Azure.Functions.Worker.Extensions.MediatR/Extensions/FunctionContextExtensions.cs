@@ -61,6 +61,21 @@ public static class FunctionContextExtensions
                                 return;
                             }
 
+                            if (metadata.ModelType == typeof(DateTime))
+                            {
+                                metadata.PropertySetter?.Invoke(result, DateTime.Parse(stringValue));
+                                return;
+                            }
+
+                            if (metadata.ModelType == typeof(DateTime?))
+                            {
+                                if (!string.IsNullOrWhiteSpace(stringValue)) {
+                                    metadata.PropertySetter?.Invoke(result, DateTime.Parse(stringValue));
+                                }
+                                
+                                return;
+                            }
+
                             if (metadata.ModelType.IsEnum && int.TryParse(stringValue, out int intValue))
                             {
                                 metadata.PropertySetter?.Invoke(result, Enum.ToObject(metadata.ModelType, intValue));
